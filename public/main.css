@@ -1,0 +1,28 @@
+.vuetify3-dialog-card > .v-card-actions {
+    justify-content: flex-end !important;
+    }
+
+  .v-card .card-title-color{
+        background-color: #CFD8DC;
+    }
+    .tooltip-delete .v-overlay__content {
+  background-color: #EF5350 !important;
+}
+.tooltip-warning .v-overlay__content {
+  background-color: orange !important;
+}
+.whiteBoard{
+  color: black !important;
+  opacity: 0.9 !important;
+}
+.fixed-bar {
+  position: sticky;
+  position: -webkit-sticky; /* for safari */
+  top: 6em;
+  z-index: 2;
+}
+.scrollable{
+  display: flex;
+  flex-direction: column-reverse;
+  overflow-y: scroll;
+}
