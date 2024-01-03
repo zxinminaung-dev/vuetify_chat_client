@@ -98,8 +98,7 @@ export default {
       let vm = this;
       if (vm.isValid) {
         authService.Login(vm.user).then((res) => {
-          if (res.success) {
-            console.log(res)
+          if (res.success) {           
             vm.$router.push("/");
              this.socket.loggedInUser=res;
           } else {
