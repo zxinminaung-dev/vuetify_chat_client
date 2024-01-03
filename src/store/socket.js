@@ -22,6 +22,7 @@ export const socket = defineStore('socket', {
         connect() {
             this.socket = io(SOCKET_URL); // Replace with your server address
             this.socket.on('message', (data) => {
+                console.log(data)
                 if(data.friendShipId == this.friendshipId){
                     var message = this.messageList.filter(x=> x.id == data.id)[0]
                     if(!message){
