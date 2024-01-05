@@ -1,5 +1,4 @@
 # Message Client
-```
 <ul>
   <li>Used Vue 3 and Vuetify 3</li>
   <li>Used vue option api</li>
@@ -10,7 +9,6 @@
   <li>Used Render.com Hosting (https://render.com/)</li>
   <li>App Link (https://chat-client-1mz2.onrender.com/)</li>
 </ul>
-```
 ## Project setup
 
 ```
