@@ -5,6 +5,7 @@
   <li>Used paina store</li>
   <li>Used socket io client for socket connection</li>
   <li>Used Axios for Backend Connection</li>
+  <li>BackEnd project Link (https://github.com/zxinminaung-dev/json_chat_server)
   <li>Used Render.com Hosting (https://render.com/)</li>
   <li>App Link (https://chat-client-1mz2.onrender.com/)</li>
 </ul>
