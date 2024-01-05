@@ -117,7 +117,7 @@
           <v-icon v-else size="60" color="" icon="mdi-account-circle"></v-icon>
         </v-avatar>
       </v-list-item>
-      <v-list-item :title="socket.user.name"> </v-list-item>
+      <v-list-item>{{ socket.user.name }} </v-list-item>
       <v-divider></v-divider>
     </v-list>
   </v-navigation-drawer>
@@ -173,7 +173,10 @@ export default {
       this.socket.users = [];
       userService.GetAll(this.socket.loggedInUser.id).then((res) => {
         this.socket.users = res.data.data;
-        this.socket.user = res.data.data[0];
+        if(res.data.data.length>0){
+          this.socket.user = res.data.data[0];
+        }
+        
       });
     },
     manageAccount() {},
