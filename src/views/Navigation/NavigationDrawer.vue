@@ -7,24 +7,67 @@
     </template>
     <v-app-bar-title>Messenger App</v-app-bar-title>
     <v-spacer></v-spacer>
-    <!-- <v-badge content="socket.count" color="error" class="mr-3">
-      <v-icon>mdi-account-school</v-icon>
-    </v-badge> -->
+    <!--  -->
+    <v-menu class="mr-2" v-if="socket.notViewList.length > 0" >
+      <template v-slot:activator="{ props }">
+        <v-btn class="text-none" stacked v-bind="props">
+          <v-badge :content="socket.notViewList.length" color="error">
+            <v-icon>mdi-bell-outline</v-icon>
+          </v-badge>
+        </v-btn>
+      </template>
+      <v-card width="250">
+        <v-list density="compact" v-for="item in socket.notViewList">
+          <v-list-item :key="item.id" :title="item.name" @click="changeUser(item)">
+            <template v-slot:prepend>
+              <v-avatar size="30">
+                <v-img v-if="item.image" :src="item.image" alt="image" cover></v-img>
+                <v-icon v-else size="30" color="" icon="mdi-account-circle"></v-icon>
+              </v-avatar>
+            </template>
+          </v-list-item>
+        </v-list>
+      </v-card>
+    </v-menu>
     <v-menu class="mr-2">
       <template v-slot:activator="{ props }">
-        <v-btn v-bind="props" density="comfortable" icon="mdi-account-circle"> </v-btn>
+        <v-avatar size="30" v-bind="props" class="mr-3">
+          <v-img
+            v-if="socket.loggedInUser.image"
+            :src="socket.loggedInUser.image"
+            alt="image"
+            cover
+          ></v-img>
+          <v-icon v-else size="30" color="" icon="mdi-account-circle"></v-icon>
+        </v-avatar>
       </template>
       <v-card width="250">
         <v-list density="compact">
           <v-list-item class="mt-2 text-center">
-            <v-avatar>
-              <v-icon size="35" color="" icon="mdi-account-circle"></v-icon>
+            <v-avatar size="45">
+              <v-img
+                v-if="socket.loggedInUser.image"
+                :src="socket.loggedInUser.image"
+                alt="image"
+                cover
+              ></v-img>
+              <v-icon v-else size="45" color="" icon="mdi-account-circle"></v-icon>
             </v-avatar>
           </v-list-item>
           <v-divider></v-divider>
           <v-list-item class="text-center">{{ socket.loggedInUser.name }}</v-list-item>
           <v-list-item class="text-center">
-            <v-btn class="mb-2" density="comfortable" @click="Logout">
+            <v-btn block class="mb-2" color="primary" elevated @click="manageAccount">
+              Manage Account
+            </v-btn>
+          </v-list-item>
+          <v-list-item class="text-center">
+            <v-btn
+              class="mb-2"
+              append-icon="mdi-logout"
+              density="comfortable"
+              @click="Logout"
+            >
               Logout
             </v-btn>
           </v-list-item>
@@ -33,12 +76,30 @@
     </v-menu>
   </v-app-bar>
   <v-navigation-drawer v-model="sidebar" app v-if="socket.isLogin" position="left">
-    <v-list density="compact" v-for="item in socket.users" :key="item">
-      <v-list-item v-if="socket.loggedInUser.id != item.id" prepend-avatar="https://cdn.vuetifyjs.com/images/john.png"
-        @click="changeUser(item)" :title="item.name">
+    <v-list dense>
+      <v-list-item
+      v-for="(item, i) in socket.users" 
+        :key="item"
+        :value="item"
+        color="primary"
+        :title="item.name"
+        @click="changeUser(item)"
+      >
+        <template v-slot:prepend>
+          <v-avatar size="35">
+            <v-img v-if="item.image" :src="item.image" alt="image" cover></v-img>
+            <v-icon v-else size="35" color="" icon="mdi-account-circle"></v-icon>
+          </v-avatar>
+        </template>
         <!-- v-if="item.online" -->
         <template v-slot:append>
-          <v-icon v-if="item.online" class="mt-n1" size="12" color="green" icon="mdi-circle"></v-icon>
+          <v-icon
+            v-if="item.online"
+            class="mt-n1"
+            size="12"
+            color="green"
+            icon="mdi-circle"
+          ></v-icon>
         </template>
       </v-list-item>
     </v-list>
@@ -46,12 +107,17 @@
   <v-navigation-drawer location="right" app v-if="socket.isLogin">
     <v-list class="text-center">
       <v-list-item>
-        <v-avatar size="69">
-          <v-img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John"></v-img>
+        <v-avatar size="60">
+          <v-img
+            v-if="socket.user.image"
+            :src="socket.user.image"
+            alt="image"
+            cover
+          ></v-img>
+          <v-icon v-else size="60" color="" icon="mdi-account-circle"></v-icon>
         </v-avatar>
       </v-list-item>
-      <v-list-item :title="socket.user.name">
-      </v-list-item>
+      <v-list-item :title="socket.user.name"> </v-list-item>
       <v-divider></v-divider>
     </v-list>
   </v-navigation-drawer>
@@ -73,47 +139,60 @@ export default {
       socket: socket(),
       valid: false,
       deviceWidth: window.innerWidth,
+      showNoti: false,
     };
   },
   watch: {
-    'socket.loggedInUser'(val) {
+    "socket.loggedInUser"(val) {
       this.GetUserList();
-    }
+    },
+    "socket.newMessage"(val) {
+      if (val.to == this.socket.loggedInUser.id && val.from != this.socket.user.id) {
+        this.AddNewMessageUser(val.from);
+      }
+    },
   },
   created() {
     if (!this.socket.loggedInUser.id > 0) {
-      var user = JSON.parse(localStorage.getItem('user'))
+      var user = JSON.parse(localStorage.getItem("user"));
       if (user) {
         this.socket.loggedInUser.id = user.id;
         this.socket.loggedInUser.name = user.name;
-        this.socket.loggedInUser.username = user.username
+        this.socket.loggedInUser.username = user.username;
+        this.socket.loggedInUser.image = user.image;
       }
-
     }
     this.GetUserList();
   },
   mounted() {
-    // this.socket.connect();
     window.addEventListener("resize", this.updateDeviceWidth);
-    // this.context = this.$refs.whiteboardCanvas.getContext("2d");
   },
-  beforeMount() {
-    // this.socket.disconnect();
-  },
+  beforeMount() {},
   methods: {
     GetUserList() {
-      this.socket.users = []
+      this.socket.users = [];
       userService.GetAll(this.socket.loggedInUser.id).then((res) => {
         this.socket.users = res.data.data;
         this.socket.user = res.data.data[0];
       });
     },
-    Logout(){
-      authService.Logout(this.socket.loggedInUser.id).then((res)=>{
-          if(res.status==200){
-            this.$router.push("/login");
+    manageAccount() {},
+    AddNewMessageUser(id) {
+      if (id > 0) {
+        userService.GetById(id).then((res) => {
+          var user = this.socket.notViewList.filter((x) => x.id == res.data.id)[0];
+          if (!user) {
+            this.socket.notViewList.push(res.data);
           }
-      })
+        });
+      }
+    },
+    Logout() {
+      authService.Logout(this.socket.loggedInUser.id).then((res) => {
+        if (res.status == 200) {
+          this.$router.push("/login");
+        }
+      });
     },
     updateDeviceWidth() {
       this.deviceWidth = window.innerWidth;
@@ -134,11 +213,13 @@ export default {
     },
     changeUser(user) {
       this.socket.user = user;
+      var notViewuser = this.socket.notViewList.filter((x) => x.id == user.id);
+      if (notViewuser) {
+        this.socket.notViewList.pop(user);
+      }
     },
   },
-  computed: {
-    ...mapState[(socket, ["count,message,item,socket,messages"])],
-  },
+  computed: {},
 };
 </script>
 <style></style>

@@ -6,4 +6,5 @@ export default class LoggedInUser{
     token=''
     success=false
     messages=''
+    image=''
 }

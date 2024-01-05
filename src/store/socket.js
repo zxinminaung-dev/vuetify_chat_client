@@ -14,18 +14,23 @@ export const socket = defineStore('socket', {
             user: new User(),
             isLogin: false,
             messageList:[],
+            newMessage:{},
             loggedInUser: new LoggedInUser(),
-            friendshipId:0
+            friendshipId:0,
+            notViewList:[
+
+            ]
         }
     },
     actions: {
         connect() {
             this.socket = io(SOCKET_URL); // Replace with your server address
             this.socket.on('message', (data) => {
-                // console.log(data)
+                console.log(data)
+                this.newMessage=data;
                 if(data.friendShipId == this.friendshipId){
                     var message = this.messageList.filter(x=> x.id == data.id)[0]
-                    if(!message){
+                    if(!message){                       
                         this.messageList.push(data);
                     }                   
                 }
@@ -40,7 +45,6 @@ export const socket = defineStore('socket', {
                     }
                     return obj;
                 });
-                console.log(this.users)
             });
             this.socket.on('disconnected', (data) => {
                 console.log('Disconnected ')

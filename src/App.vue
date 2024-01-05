@@ -4,11 +4,8 @@
     <NavigationDrawer />
     <Footer />
     <v-main class="mb-1" id="scrollable">
-      <router-view
-          @eventname="updateparent"
-          :key="$route.fullPath"
-        ></router-view>
-      </v-main>
+      <router-view @eventname="updateparent" :key="$route.fullPath"></router-view>
+    </v-main>
     <!-- </v-layout> -->
   </v-app>
 </template>
@@ -22,8 +19,7 @@ export default {
     NavigationDrawer,
     Footer,
   },
-  watch: {
-  },
+  watch: {},
   data() {
     return {
       valid: false,
@@ -32,16 +28,16 @@ export default {
   },
   created() {},
   mounted() {
+    this.socket.connect();
   },
   beforeMount() {
+    this.socket.disconnect();
   },
   methods: {
     updateparent(val) {
       this.valid = val;
     },
   },
-  computed: {
-  },
+  computed: {},
 };
 </script>
-

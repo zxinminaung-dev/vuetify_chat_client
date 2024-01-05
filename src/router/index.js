@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { socket } from '@/store/socket'
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
+import SignUp from '../views/SignUp.vue'
 const routes = [
   {
     path: '',
@@ -13,6 +14,11 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login
+  },
+  {
+    path: '/signup',
+    name: 'SignUp',
+    component: SignUp
   }
 ]
 
@@ -21,10 +27,15 @@ const router = createRouter({
   routes,
 })
 router.beforeEach((to,from,next) => {
-  const routeName="Login"
+  const routeName ="Login"
+  const singUp = "SignUp"
   const loggedIn = localStorage.getItem('user');
   const store = socket();
   if(to.name===routeName){
+    store.isLogin=false;
+    localStorage.removeItem('user');
+  }
+  else if(to.name===singUp){
     store.isLogin=false;
     localStorage.removeItem('user');
   }

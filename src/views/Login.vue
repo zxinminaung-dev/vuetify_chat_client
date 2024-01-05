@@ -9,7 +9,7 @@
               </v-avatar>
             </v-row>
             <v-row justify="center">
-              <h4>Student Management System</h4>
+              <h4>Chat Application</h4>
             </v-row>
           </v-card-title>
           <v-card-text>
@@ -45,6 +45,7 @@
                     Sign In
                   </v-btn></v-col
                 >
+                <v-card-text class="mt-n10 text-center">Do not have an accout?<v-btn variant="text" class="ml-1" color="primary" @click="signUp">SignUp</v-btn></v-card-text>
               </v-row>
               <!-- <v-row justify="center">
                   <v-col cols="12" md="8">
@@ -94,6 +95,9 @@ export default {
     passwordRule(v) {
       return !!v || "Password is required";
     },
+    signUp(){
+      this.$router.push({name:'SignUp'})
+    },
     Login() {
       let vm = this;
       if (vm.isValid) {
@@ -103,7 +107,7 @@ export default {
              this.socket.loggedInUser=res;
           } else {
             vm.snackbar = true;
-            vm.color = "red darken,-2";
+            vm.color = "red darken-2";
             vm.text = res.messages[0];
           }
         });
