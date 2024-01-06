@@ -26,7 +26,7 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
 })
-router.beforeEach((to,from,next) => {
+router.beforeEach((to,from) => {
   const routeName ="Login"
   const singUp = "SignUp"
   const loggedIn = localStorage.getItem('user');
@@ -34,10 +34,12 @@ router.beforeEach((to,from,next) => {
   if(to.name===routeName){
     store.isLogin=false;
     localStorage.removeItem('user');
+    router.push({name:'Login'});
   }
   else if(to.name===singUp){
     store.isLogin=false;
     localStorage.removeItem('user');
+    router.push({name:'SignUp'});
   }
   else{
     if(!loggedIn){
@@ -55,6 +57,5 @@ router.beforeEach((to,from,next) => {
     }
   }
   
-  next()
 });
 export default router
