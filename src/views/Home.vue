@@ -93,12 +93,13 @@ export default {
           messageService
             .GetMessagesByFriendshipId(this.socket.friendshipId)
             .then((res) => {
-              this.dialog = false;
+              
               this.socket.messageList = res.data.data;
             });
         }
       });
-      }      
+      }    
+      this.dialog = false;  
     },
     GetMesssages() {},
   },
