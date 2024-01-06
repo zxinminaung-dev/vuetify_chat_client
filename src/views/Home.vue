@@ -86,7 +86,8 @@ export default {
     GetFriendShip(user_id) {
       this.dialog = true;
       this.socket.messageList = [];
-      friendShipService.Get(this.socket.loggedInUser.id, user_id).then((res) => {
+      if(this.socket.loggedInUser && user_id){
+        friendShipService.Get(this.socket.loggedInUser.id, user_id).then((res) => {
         this.socket.friendshipId = res.data.data.id;
         if (this.socket.friendshipId > 0) {
           messageService
@@ -97,6 +98,7 @@ export default {
             });
         }
       });
+      }      
     },
     GetMesssages() {},
   },
