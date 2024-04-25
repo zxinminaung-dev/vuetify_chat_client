@@ -5,7 +5,7 @@
     <template v-slot:prepend>
       <v-app-bar-nav-icon @click="sidebar = !sidebar"></v-app-bar-nav-icon>
     </template>
-    <v-app-bar-title>Messenger App</v-app-bar-title>
+    <v-app-bar-title>Project Management System</v-app-bar-title>
     <v-spacer></v-spacer>
     <!--  -->
     <v-menu class="mr-2" v-if="socket.notViewList.length > 0" >
@@ -17,7 +17,7 @@
         </v-btn>
       </template>
       <v-card width="250">
-        <v-list density="compact" v-for="item in socket.notViewList">
+        <v-list density="compact" v-for="item in socket.notViewList" :key="item.id">
           <v-list-item :key="item.id" :title="item.name" @click="changeUser(item)">
             <template v-slot:prepend>
               <v-avatar size="30">
@@ -78,7 +78,7 @@
   <v-navigation-drawer v-model="sidebar" app v-if="socket.isLogin" position="left">
     <v-list dense>
       <v-list-item
-      v-for="(item, i) in socket.users" 
+      v-for="item in socket.users" 
         :key="item"
         :value="item"
         color="primary"

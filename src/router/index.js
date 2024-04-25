@@ -27,21 +27,23 @@ const router = createRouter({
   routes,
 })
 router.beforeEach((to,from) => {
+  const store = socket();
   const routeName ="Login"
   const singUp = "SignUp"
   const loggedIn = localStorage.getItem('user');
-  const store = socket();
+  console.log(loggedIn)
+  
+  console.log(to)
   if(to.name===routeName){
     store.isLogin=false;
     localStorage.removeItem('user');
-    router.push({name:'Login'});
   }
   else if(to.name===singUp){
     store.isLogin=false;
     localStorage.removeItem('user');
-    router.push({name:'SignUp'});
   }
   else{
+    console.log('Heere')
     if(!loggedIn){
       store.isLogin=false;
         router.push({name:'Login'});
