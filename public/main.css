@@ -2,7 +2,7 @@
     justify-content: flex-end !important;
     }
 
-  .v-card .card-title-color{
+.v-card .card-title-color{
         background-color: #CFD8DC;
     }
     .tooltip-delete .v-overlay__content {
@@ -25,4 +25,10 @@
   display: flex;
   flex-direction: column-reverse;
   overflow-y: scroll;
+}
+.spacing2{
+  letter-spacing: 2.0px;
+}
+.mdi-close-circle{
+  visibility: hidden;
 }

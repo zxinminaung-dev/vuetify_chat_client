@@ -2,8 +2,8 @@
   <v-app>
     <!-- <v-layout> -->
     <NavigationDrawer />
-    <Footer />
-    <v-main class="mb-1" id="scrollable">
+    <!-- <Footer /> -->
+    <v-main class="mb-1">
       <router-view @eventname="updateparent" :key="$route.fullPath"></router-view>
     </v-main>
     <!-- </v-layout> -->

@@ -31,9 +31,6 @@ router.beforeEach((to,from) => {
   const routeName ="Login"
   const singUp = "SignUp"
   const loggedIn = localStorage.getItem('user');
-  console.log(loggedIn)
-  
-  console.log(to)
   if(to.name===routeName){
     store.isLogin=false;
     localStorage.removeItem('user');
@@ -43,7 +40,6 @@ router.beforeEach((to,from) => {
     localStorage.removeItem('user');
   }
   else{
-    console.log('Heere')
     if(!loggedIn){
       store.isLogin=false;
         router.push({name:'Login'});

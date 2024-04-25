@@ -2,6 +2,7 @@
 import { defineStore } from 'pinia'
 import { io } from 'socket.io-client'
 import User from '../models/user.model'
+import Project from '../models/project.model'
 import LoggedInUser from '@/models/loggedIn.user.model';
 const SOCKET_URL = import.meta.env.VITE_WEBSOCKET_API;
 export const socket = defineStore('socket', {
@@ -17,6 +18,8 @@ export const socket = defineStore('socket', {
             newMessage:{},
             loggedInUser: new LoggedInUser(),
             friendshipId:0,
+            selectedProject:new Project(),
+            teamMembers:[],
             notViewList:[
 
             ]

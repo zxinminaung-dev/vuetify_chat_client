@@ -3,62 +3,105 @@
     <v-dialog v-model="dialog" persistent width="auto">
       <v-card>
         <v-card-text>
-          <v-progress-circular indeterminate color="amber"></v-progress-circular>
+          <v-progress-circular
+            indeterminate
+            color="amber"
+          ></v-progress-circular>
         </v-card-text>
       </v-card>
     </v-dialog>
-    <v-list
-      density="compact"
-      v-for="item in socket.messageList"
-      :key="item"
-      v-chat-scroll
-      class="messages"
+    <v-card variant="flat" color="blue-lighten-5">
+      <v-card-text>
+        {{ this.socket.selectedProject.Name }}
+      </v-card-text>
+    </v-card>
+    <v-card variant="flat" color="blue-lighten-5" class="mt-3">
+      <v-btn
+        prepend-icon="mdi-plus-circle-outline"
+        variant="text"
+        color="success"
+        @click="cardModuleForm = !cardModuleForm"
+      >
+        Modules
+      </v-btn>
+    </v-card>
+    <v-card
+      v-if="cardModuleForm"
+      class="mx-auto mt-2"
+      subtitle="New Module"
+      style="max-height: 100px"
     >
-      <v-list-item class="text-left mt-n4" v-if="item.to != socket.user.id">
-        <v-row>
-          <v-col cols="12" md="6" sm="8">
-            <v-card-text class="ml-n3">From - {{ socket.user.name }}</v-card-text>
-            <v-card color="primary" class="mt-n3" v-if="!item.isImage">
-              <v-card-text>{{ item.text }}</v-card-text>
-            </v-card>
-            <v-card
-              v-else
-              class="mx-auto"
-              max-width="300"
-              height="200"
-              :image="item.text"
-              theme="dark"
-            ></v-card>
-          </v-col>
-        </v-row>
-      </v-list-item>
-      <v-list-item class="text-left mt-n4" v-else>
-        <v-row justify="end">
-          <v-col cols="12" md="6" sm="8">
-            <v-card-text class="ml-n3">You</v-card-text>
-            <v-card color="success" class="mt-n3" v-if="!item.isImage">
-              <v-card-text>{{ item.text }}</v-card-text>
-            </v-card>
-            <v-card
-              v-else
-              class="mx-auto"
-              max-width="300"
-              height="200"
-              :image="item.text"
-              theme="dark"
-            ></v-card>
-          </v-col>
-        </v-row>
-      </v-list-item>
-    </v-list>
+      <v-card-text class="bg-surface-light mt-n2">
+        <v-form>
+          <v-row cols="12" class="mb-n3" style="max-height: 80px">
+            <v-col cols="12" md="3" class="mt-n1">
+              <v-text-field
+                v-model="socket.selectedProject.Name"
+                label="Project Name"
+                :disabled="true"
+                variant="underlined"
+                density="compact"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="3" class="mt-n1">
+              <v-text-field
+                v-model="module.Name"
+                label="Module Name"
+                variant="underlined"
+                density="compact"
+              ></v-text-field>
+              <!-- <v-autocomplete
+                density="compact"
+                required
+                chips
+                closable-chips
+                variant="underlined"
+                label="assigne"
+                :items="socket.teamMembers"
+                item-title="Name"
+                item-value="Id"
+              >
+              <template v-slot:chip="{ props, item }">
+                <v-chip
+                  v-bind="props"
+                  :text="item.Name"
+                ></v-chip>
+              </template>
+              </v-autocomplete> -->
+            </v-col>
+            <v-col cols="12" md="4" class="mt-n1">
+              <v-btn
+                append-icon="mdi-arrow-left-bottom"
+                class="mt-2 mr-2"
+                density="compact"
+                variant="tonal"
+                color="success"
+              >
+                Save
+              </v-btn>
+              <v-btn
+                append-icon="mdi-close"
+                class="mt-2"
+                density="compact"
+                variant="tonal"
+                color="warning"
+                @click="CancelModule()"
+              >
+                Cancel
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-form>
+      </v-card-text>
+    </v-card>
+
   </v-container>
 </template>
 
 <script>
 import { socket } from "@/store/socket";
-import friendShipService from "../services/friendship/friendship.service";
-import messageService from "../services/message/message.service";
 import Message from "../models/message.model";
+import Module from "../models/module.model";
 export default {
   data() {
     return {
@@ -69,48 +112,33 @@ export default {
       imageString: "",
       cardHeight: 0,
       dialog: false,
+      cardModuleForm: false,
+      module: new Module(),
     };
   },
-  created() {},
+  created() {
+    console.log(this.socket.teamMembers);
+  },
   watch: {
-    "socket.user"(val) {
-      if (val) {
-        this.GetFriendShip(val.id);
+    "socket.selectedProject"(val) {
+      if(val){
+        
+        this.cardModuleForm = false;
       }
     },
   },
-  created(){
-    this.GetFriendShip(this.socket.user.id)
-  },
+  created() {},
   methods: {
-    GetFriendShip(user_id) {
-      this.dialog = true;
-      this.socket.messageList = [];
-      if(this.socket.loggedInUser && user_id){
-        friendShipService.Get(this.socket.loggedInUser.id, user_id).then((res) => {
-        this.socket.friendshipId = res.data.data.id;
-        if (this.socket.friendshipId > 0) {
-          messageService
-            .GetMessagesByFriendshipId(this.socket.friendshipId)
-            .then((res) => {
-              
-              this.socket.messageList = res.data.data;
-            });
-        }
-      });
-      }    
-      this.dialog = false;  
-    },
-    GetMesssages() {},
+    CancelModule(){
+      this.module.Name = "";
+      this.cardModuleForm = !this.cardModuleForm
+    }
   },
   mounted() {
     window.addEventListener("resize", this.updateDeviceWidth);
   },
-  updated() {
-    console.log("update");
-  },
-  beforeMount() {
-  },
+  updated() {},
+  beforeMount() {},
 };
 </script>
 
